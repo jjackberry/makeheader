@@ -1,6 +1,28 @@
 #!/usr/bin/env python3
 import os
+import re
 import sys
+
+PACKAGES_H_FILENAME = "packages.h"
+
+PACKAGES_H_CONTENT = """#ifndef PACKAGES_H
+#define PACKAGES_H
+
+#include <algorithm>
+#include <climits>
+#include <cmath>
+#include <iostream>
+#include <map>
+#include <queue>
+#include <set>
+#include <stack>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
+#endif
+"""
 
 def bail(msg="\nExiting makeheader. No files were modified."):
     print(msg)
@@ -17,7 +39,7 @@ def prompt(field_name, required=True):
 
 
 def prompt_multiline():
-    print("Paste the problem description (blank line when done):")
+    print("Paste the problem description, then press Ctrl+D when done (Mac/Linux) or Ctrl+Z then Enter (Windows).")
     lines = []
     while True:
         try:
@@ -26,8 +48,6 @@ def prompt_multiline():
             break
         if line.strip().lower() in ("q", "quit", "exit"):
             bail()
-        if line == "":
-            break
         lines.append(line)
     return "\n".join(lines).strip()
 
@@ -51,10 +71,48 @@ def build_header(description):
 
 """
 
+def is_cpp(path):
+    return path.lower().endswith(".cpp")
+
+def ensure_packages_h(target_path):
+    """Create packages.h in the same directory as target_path if it doesn't exist. Return path to packages.h or None."""
+    target_dir = os.path.dirname(target_path) or "."
+    packages_h_path = os.path.join(target_dir, PACKAGES_H_FILENAME)
+    if not os.path.exists(packages_h_path):
+        try:
+            os.makedirs(target_dir, exist_ok=True)
+            with open(packages_h_path, "w") as f:
+                f.write(PACKAGES_H_CONTENT)
+            print(f"Created {packages_h_path} with common packages.")
+        except OSError as e:
+            print(f"Warning: could not create {packages_h_path}: {e}. Continuing without it.")
+            return None
+    return packages_h_path
+
+def strip_one_include_packages_h(content):
+    """Remove the first line that is #include \"packages.h\" or \"leetcode.h\" (with optional whitespace). Returns (stripped_content, was_found)."""
+    pattern = re.compile(r'^\s*#\s*include\s*["<](?:packages|leetcode)\.h[">]\s*\n?', re.MULTILINE)
+    match = pattern.search(content)
+    if match:
+        before = content[:match.start()].rstrip()
+        after = content[match.end():].lstrip("\n")
+        new_content = (before + "\n\n" + after) if after else before
+        return new_content, True
+    return content, False
+
 def write_header(path, header_text):
+    use_include = is_cpp(path)
+    include_line = ""
+    if use_include:
+        ensure_packages_h(path)
+        include_line = '\n#include "packages.h"\n\n'
+
     if not os.path.exists(path):
+        target_dir = os.path.dirname(path)
+        if target_dir:
+            os.makedirs(target_dir, exist_ok=True)
         with open(path, "w") as f:
-            f.write(header_text)
+            f.write(header_text + include_line)
         print(f"Created {path} with header.")
         return
 
@@ -64,13 +122,18 @@ def write_header(path, header_text):
 
     if choice == "o":
         with open(path, "w") as f:
-            f.write(header_text)
+            f.write(header_text + include_line)
         print(f"Overwrote header in {path}")
     elif choice == "a":
-        with open(path, "r+") as f:
+        with open(path, "r") as f:
             existing = f.read()
-            f.seek(0)
-            f.write(header_text + existing)
+        if use_include:
+            existing_stripped, _ = strip_one_include_packages_h(existing)
+            new_content = header_text + include_line + existing_stripped
+        else:
+            new_content = header_text + existing
+        with open(path, "w") as f:
+            f.write(new_content)
         print(f"Prepended header to {path}")
     else:
         print("Didn't recognize that. No changes made.")

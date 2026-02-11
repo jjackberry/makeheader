@@ -18,7 +18,9 @@ python3 makeheader.py   # Mac / Linux
 python makeheader.py    # Windows
 ```
 
-You’ll be asked for the filename (e.g. `main.cpp`) and then to paste the problem description; end with a blank line. If the file exists, choose to overwrite the header or append it above the code. Type `q`, `quit`, or `exit` at any prompt to cancel without writing.
+You’ll be asked for the filename (e.g. `main.cpp`) and then to paste the problem description; when you’re done pasting, press **Ctrl+D** (Mac/Linux) or **Ctrl+Z** then Enter (Windows). If the file exists, choose to overwrite the header or append it above the code. Type `q`, `quit`, or `exit` at any prompt to cancel without writing.
+
+For **.cpp** files, makeheader adds `#include "packages.h"` right after the header. If `packages.h` isn’t in the same directory, it creates one with the necessary packages (vector, string, algorithm, etc.); if it already exists, it’s left unchanged. Your .cpp stays clean with a single include.
 
 ---
 
@@ -30,14 +32,17 @@ Set up once so you can type `makeheader` from anywhere instead of `python3 makeh
 
 1. In the makeheader folder, run: `chmod +x makeheader.py`
 2. Get the folder path: run `pwd` and copy the path (e.g. `/Users/you/projects/makeheader`).
-3. See which shell you use: run `echo $SHELL`. If it prints `/bin/zsh`, edit `~/.zshrc`; if `/bin/bash`, edit `~/.bashrc` (e.g. `nano ~/.zshrc` or `code ~/.zshrc`).
-4. Add this line at the end (use your path from step 2):
+3. See which shell you use: run `echo $SHELL`. If it prints `/bin/zsh`, you’ll edit `~/.zshrc`; if `/bin/bash`, you’ll edit `~/.bashrc`.
+4. Open that file in an editor and add the alias line at the **end** of the file (use your path from step 2 in place of `/path/to/makeheader`):
 
    ```bash
    alias makeheader='python3 /path/to/makeheader/makeheader.py'
    ```
 
-5. Reload the config: `source ~/.zshrc` or `source ~/.bashrc`. New terminals will pick it up automatically.
+   **Option A — VS Code:** Run `code ~/.zshrc` (or `code ~/.bashrc`). The file opens in your editor. Scroll to the bottom, add the line above, save (Cmd+S), and close.
+
+   **Option B — Nano (terminal editor):** Run `nano ~/.zshrc` (or `nano ~/.bashrc`). You’ll see the file content. Use the arrow keys to go to the very bottom. Type the alias line (paste your real path). To save: press **Ctrl+O**, then **Enter**. To exit: press **Ctrl+X**.
+5. Reload the config: run `source ~/.zshrc` or `source ~/.bashrc`. New terminals will pick it up automatically.
 
 **Windows (PowerShell)**
 
