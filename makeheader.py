@@ -37,7 +37,7 @@ def show_intro():
  makeheader — Header Generator CLI
 =========================================
 
-Paste a problem description (from LeetCode, an assignment, etc.) and it becomes the header comment in your source file.
+Paste a problem description (from LeetCode, an assignment, etc.) and it becomes a C++ block comment (/* ... */) at the top of your file.
 
 At any prompt you can type q, quit, or exit to cancel. Runs in the current directory — run it from the folder where the file should live.
 """)

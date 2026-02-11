@@ -1,8 +1,8 @@
 # makeheader
 
-Turns a coding problem description into a file header. Copy the problem text (from LeetCode, an assignment, a PDF, etc.), run makeheader, paste it when prompted, and it gets written as a comment block at the top of your source file. No dependencies.
+Turns a coding problem description into a **C++ block comment** header. Copy the problem text (from LeetCode, an assignment, a PDF, etc.), run makeheader, paste it when prompted, and it gets written as a `/* ... */` comment at the top of your source file. **Output is C++ style only.** No dependencies.
 
-**Requirements.** Python 3. Use `python3 --version` (Mac/Linux) or `python --version` (Windows) to check. If it’s not installed, get it from [python.org](https://www.python.org/downloads/).
+**Requirements.** Python 3. Check with `python3 --version` (Mac/Linux) or `python --version` (Windows). If it’s not installed: [python.org](https://www.python.org/downloads/).
 
 **Install.**
 
@@ -11,65 +11,77 @@ git clone https://github.com/jjackberry/makeheader.git
 cd makeheader
 ```
 
-**Run it.** Execute the script from the directory where you want the target file to be created or edited.
+**Run it.** From the directory where you want the file created or edited:
 
 ```bash
-python3 makeheader.py   # Mac/Linux
+python3 makeheader.py   # Mac / Linux
 python makeheader.py    # Windows
 ```
 
-**Run it as a command (alias).** So you can type `makeheader` from any folder instead of `python3 makeheader.py`:
+You’ll be asked for the filename (e.g. `main.cpp`) and then to paste the problem description; end with a blank line. If the file exists, choose to overwrite the header or append it above the code. Type `q`, `quit`, or `exit` at any prompt to cancel without writing.
 
-1. **Make the script executable.** In the terminal, go to the makeheader folder and run:
+---
+
+### Run as a command (alias) — use `makeheader` from any folder
+
+Set up once so you can type `makeheader` from anywhere instead of `python3 makeheader.py`.
+
+**Mac / Linux (Zsh or Bash)**
+
+1. In the makeheader folder, run: `chmod +x makeheader.py`
+2. Get the folder path: run `pwd` and copy the path (e.g. `/Users/you/projects/makeheader`).
+3. See which shell you use: run `echo $SHELL`. If it prints `/bin/zsh`, edit `~/.zshrc`; if `/bin/bash`, edit `~/.bashrc` (e.g. `nano ~/.zshrc` or `code ~/.zshrc`).
+4. Add this line at the end (use your path from step 2):
+
    ```bash
-   chmod +x makeheader.py
+   alias makeheader='python3 /path/to/makeheader/makeheader.py'
    ```
 
-2. **Find the path to that folder.** While you're still in the makeheader folder, run:
-   ```bash
-   pwd
+5. Reload the config: `source ~/.zshrc` or `source ~/.bashrc`. New terminals will pick it up automatically.
+
+**Windows (PowerShell)**
+
+1. Get the full path to the makeheader folder (e.g. `C:\Users\You\projects\makeheader`). In PowerShell you can `cd` there and run `pwd` to see it.
+2. Open your PowerShell profile in an editor. If the file doesn’t exist, create it:
+
+   ```powershell
+   notepad $PROFILE
    ```
-   Copy the path it prints (e.g. `/Users/you/makeheader` or `/Users/you/projects/makeheader`). You'll use it in the next step.
 
-3. **Choose the right config file.** Your shell reads one of these when the terminal starts:
-   - **`.zshrc`** — used by Zsh (default on macOS and some Linux setups). Check with: `echo $SHELL` — if it prints `/bin/zsh`, use `.zshrc`.
-   - **`.bashrc`** — used by Bash (common on Linux, older Macs). If `echo $SHELL` prints `/bin/bash`, use `.bashrc`.
+   If you get an error that the path doesn’t exist, run: `New-Item -Path $PROFILE -ItemType File -Force`, then open it again.
+3. Add this line (use your path from step 1; use forward slashes or escaped backslashes):
 
-   Open that file in any editor (e.g. `nano ~/.zshrc` or `code ~/.zshrc` if you use VS Code).
-
-4. **Add one line** at the end of the file. Replace `YOUR_PATH_FROM_STEP_2` with the path you copied (include the full path to the folder that contains `makeheader.py`):
-   ```bash
-   alias makeheader='python3 YOUR_PATH_FROM_STEP_2/makeheader.py'
+   ```powershell
+   function makeheader { python "$env:USERPROFILE\projects\makeheader\makeheader.py" }
    ```
-   Example, if `pwd` was `/Users/jane/projects/makeheader`:
-   ```bash
-   alias makeheader='python3 /Users/jane/projects/makeheader/makeheader.py'
+
+   Example if your path is `C:\Users\Jane\makeheader`:
+
+   ```powershell
+   function makeheader { python "C:/Users/Jane/makeheader/makeheader.py" }
    ```
-   Save and close the file.
 
-5. **Load the change.** Run one of these so the alias works in this terminal session (use the same file you edited):
-   ```bash
-   source ~/.zshrc
-   ```
-   or
-   ```bash
-   source ~/.bashrc
-   ```
-   New terminal windows will pick it up automatically.
+4. Save and close. Reload the profile: `. $PROFILE` (or open a new PowerShell window).
 
-After that, you can `cd` to any project folder and run `makeheader`; no need to type `python3` or the path to the script.
+**Windows (Command Prompt)**
 
-From whatever folder or location you want, run the script, then enter the filename (e.g. `main.cpp` or `script.py`) then paste the problem description (blank line when done). If the file already exists, you can overwrite the header or append it above the existing code.
+Add the folder that contains `makeheader.py` to your system PATH, then from any directory you can run:
 
-**Quit.** At any prompt, type `q`, `quit`, or `exit` to exit without writing anything.
+```bat
+python makeheader.py
+```
 
-**Example.** You paste a problem description like:
+To add to PATH: Settings → System → About → Advanced system settings → Environment Variables → under “User variables” select Path → Edit → New → paste the makeheader folder path → OK. You can’t easily get a one-word `makeheader` command in cmd; use PowerShell or Git Bash for that.
+
+---
+
+**Example.** You paste:
 
 ```
 Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 ```
 
-The script writes it as the file header:
+The script writes this C++ block comment at the top of your file:
 
 ```cpp
 /*
@@ -77,8 +89,5 @@ The script writes it as the file header:
 */
 ```
 
-Run it from the directory that contains (or should contain) the file so paths stay simple.
-
-Possible later additions: comment style by language, problem title extraction, CLI packaging For now it’s single-file, interactive only.
-
+Run makeheader from the directory that contains (or will contain) your file. 
 License: MIT.
