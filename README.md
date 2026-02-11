@@ -7,7 +7,7 @@ Turns a coding problem description into a file header. Copy the problem text (fr
 **Install.**
 
 ```bash
-git clone https://github.com/yourusername/makeheader.git
+git clone https://github.com/jjackberry/makeheader.git
 cd makeheader
 ```
 
