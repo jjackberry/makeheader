@@ -75,8 +75,7 @@ To add to PATH: Settings → System → About → Advanced system settings → E
 
 ---
 
-**Example.** You paste:
-
+**Example.** You can just paste like a massive problem description and it will work. but here's easy example:
 ```
 Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
 ```
