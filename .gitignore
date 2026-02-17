@@ -1,6 +1,6 @@
 # macOS
 .DS_Store
-
+.TODO.md
 # Python
 __pycache__/
 *.py[cod]

@@ -4,6 +4,7 @@ import re
 import sys
 
 PACKAGES_H_FILENAME = "packages.h"
+MAX_LINE_WIDTH = 72
 
 PACKAGES_H_CONTENT = """#ifndef PACKAGES_H
 #define PACKAGES_H
@@ -62,9 +63,28 @@ Paste a problem description (from LeetCode, an assignment, etc.) and it becomes 
 At any prompt you can type q, quit, or exit to cancel. Runs in the current directory — run it from the folder where the file should live.
 """)
 
+def wrap_line(line, width=MAX_LINE_WIDTH):
+    """Break a long line into multiple lines at word boundaries."""
+    if len(line) <= width:
+        return [line]
+    out = []
+    while line:
+        if len(line) <= width:
+            out.append(line)
+            break
+        break_at = line.rfind(" ", 0, width + 1)
+        if break_at <= 0:
+            break_at = width
+        out.append(line[:break_at].rstrip())
+        line = line[break_at:].lstrip()
+    return out
+
 def build_header(description):
-    # Indent pasted lines so the block comment looks right
-    indented = "\n ".join(description.split("\n"))
+    # Indent pasted lines and wrap long lines so the block comment doesn't overflow
+    wrapped = []
+    for line in description.split("\n"):
+        wrapped.extend(wrap_line(line))
+    indented = "\n ".join(wrapped)
     return f"""/*
  {indented}
 */
